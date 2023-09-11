@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const ANALYTICS_API_KEY = process.env.ANALYTICS_API_KEY;
+const ANALYTICS_PROJECT_ID = process.env.ANALYTICS_PROJECT_ID;
 
 // Define a route to handle the specific request
 router.post("/api/proxy/top_intents", async (req, res) => {
@@ -12,17 +14,17 @@ router.post("/api/proxy/top_intents", async (req, res) => {
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: "VF.DM.64dd84f8aa29af0007d92da9.1TU4erAlbnpyi3bB",
+        authorization: ANALYTICS_API_KEY,
       },
       body: JSON.stringify({
         query: [
           {
             name: "top_intents",
             filter: {
-              projectID: "64dd84f8aa29af0007d92d9d",
+              projectID: ANALYTICS_PROJECT_ID,
               startTime,
               endTime,
-              limit: 3,
+              limit: 5,
             },
           },
         ],
@@ -61,14 +63,14 @@ router.post("/api/proxy/understood_messages", async (req, res) => {
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: "VF.DM.64dd84f8aa29af0007d92da9.1TU4erAlbnpyi3bB",
+        authorization: ANALYTICS_API_KEY,
       },
       body: JSON.stringify({
         query: [
           {
             name: "understood_messages",
             filter: {
-              projectID: "64dd84f8aa29af0007d92d9d",
+              projectID: ANALYTICS_PROJECT_ID,
               startTime,
               endTime,
             },
@@ -109,14 +111,14 @@ router.post("/api/proxy/interactions", async (req, res) => {
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: "VF.DM.64dd84f8aa29af0007d92da9.1TU4erAlbnpyi3bB",
+        authorization: ANALYTICS_API_KEY,
       },
       body: JSON.stringify({
         query: [
           {
             name: "interactions",
             filter: {
-              projectID: "64dd84f8aa29af0007d92d9d",
+              projectID: ANALYTICS_PROJECT_ID,
               startTime,
               endTime,
             },
@@ -157,14 +159,14 @@ router.post("/api/proxy/users", async (req, res) => {
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: "VF.DM.64dd84f8aa29af0007d92da9.1TU4erAlbnpyi3bB",
+        authorization: ANALYTICS_API_KEY,
       },
       body: JSON.stringify({
         query: [
           {
             name: "unique_users",
             filter: {
-              projectID: "64dd84f8aa29af0007d92d9d",
+              projectID: ANALYTICS_PROJECT_ID,
               startTime,
               endTime,
             },
@@ -205,14 +207,14 @@ router.post("/api/proxy/sessions", async (req, res) => {
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: "VF.DM.64dd84f8aa29af0007d92da9.1TU4erAlbnpyi3bB",
+        authorization: ANALYTICS_API_KEY,
       },
       body: JSON.stringify({
         query: [
           {
             name: "sessions",
             filter: {
-              projectID: "64dd84f8aa29af0007d92d9d",
+              projectID: ANALYTICS_PROJECT_ID,
               startTime,
               endTime,
             },
