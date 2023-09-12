@@ -20,9 +20,11 @@ app.use(cors());
 // Routes
 const analyticsRoutes = require("./routes/analytics");
 const knowledgebaseRoutes = require("./routes/knowledgebase");
+const transcriptRoutes = require("./routes/transcript");
 
 app.use("/", analyticsRoutes);
 app.use("/", knowledgebaseRoutes);
+app.use("/", transcriptRoutes);
 
 app.listen(port, () => {
   console.log(`Proxy server is running on port ${port}`);
