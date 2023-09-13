@@ -23,7 +23,7 @@ router.post("/api/proxy/transcriptID", async (req, res) => {
     // Check if the response status code is 200 (OK)
     if (response.status === 200) {
       const responseData = await response.json();
-    //   console.log(responseData); // Log the response data for debugging
+      // console.log(responseData); // Log the response data for debugging
       res.json(responseData);
     } else {
       console.error(
