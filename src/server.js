@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const fetch = require('node-fetch'); 
 require("dotenv").config();
 
 require('./db'); // connecting to MongoDB
@@ -11,6 +12,7 @@ import("node-fetch")
   .catch((err) => {
     console.error(err);
   });
+
 
 const app = express();
 app.use(express.json());
@@ -26,12 +28,10 @@ const knowledgebaseRoutes = require("./routes/knowledgebase");
 app.use("/", analyticsRoutes);
 app.use("/", knowledgebaseRoutes);
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 app.get("/join", async (req, res) => {
-  const { username, password, projectID, APIKey } = req.body;
-  const user = await User.findOne({ username, socialOnly: false });
-  if (!user) {
-    return res.status(400).send();
-  }
+  return res.json({message: 'Sign-up page loaded'});
 })
 
 app.post("/join", async (req, res) => {
@@ -51,12 +51,12 @@ app.post("/join", async (req, res) => {
       });
       return res.redirect("/login");
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 })
 
 app.get("/login", (req, res) => { // login GET request
-  res.json({message: 'login page loaded'});
+  return res.json({message: 'Log-in page loaded'});
 })
 
 app.post("/login", async (req, res) => { // login POST request 
@@ -64,21 +64,41 @@ app.post("/login", async (req, res) => { // login POST request
   const user = await User.findOne({ username, socialOnly: false });
   if (!user) {
     return res.status(500).json({
-        message: "An account with this username does not exist.",
+      message: "An account with this username does not exist.",
     });
   }
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) {
     return res.status(500).json({
       message: "Wrong Password",
-    }); 
+    });
   }
+  // Authorization process
+  try {
+    const apiResponse = await fetch('https://developer.voiceflow.com/api/endpoint', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add any required headers (e.g., API key, authentication token)
+      },
+    });
+    if (apiResponse.ok) {
+      const apiData = await apiResponse.json();
+      // Handle the API data as needed
+      res.status(200).json({ message: 'Login successful', apiData });
+    } else {
+      res.status(apiResponse.status).json({ message: 'API request failed' });
+    }
     req.session.loggedIn = true;
     req.session.user = user;
     res.redirect("/");
+  } catch (error) {
+    console.error('API request error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 })
 
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.listen(port, () => {
   console.log(`Proxy server is running on port ${port}`);
