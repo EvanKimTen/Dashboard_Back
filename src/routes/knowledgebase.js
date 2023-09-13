@@ -2,7 +2,7 @@ const express = require("express");
 const axios = require("axios");
 
 const router = express.Router();
-const DIALOG_MANAGER_API_KEY = process.env.DIALOG_MANAGER_API_KEY;
+const DIALOG_MANAGER_API_KEY = process.env.API_KEY;
 
 const knowledgebaseApi = axios.create({
   baseURL: "https://api.voiceflow.com/v3alpha/knowledge-base/docs",
