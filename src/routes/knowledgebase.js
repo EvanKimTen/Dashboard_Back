@@ -61,4 +61,15 @@ router.post("/proxy/knowledge-base/file", upload.any(), async (req, res) => {
   }
 });
 
+//Delete document
+router.delete("/proxy/knowledge-base/:documentID", async (req, res) => {
+  try {
+    const response = await knowledgebaseApi.delete(`/${req.params.documentID}`);
+    res.send(response.data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;
