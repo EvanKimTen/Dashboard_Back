@@ -31,8 +31,8 @@ app.use("/", knowledgebaseRoutes);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.get("/join", async (req, res) => {
-  return res.json({message: 'Sign-up page loaded'});
-})
+  return res.render("join");
+});
 
 app.post("/join", async (req, res) => {
   const { username, password, projectID, APIKey } = req.body;
@@ -56,7 +56,7 @@ app.post("/join", async (req, res) => {
 })
 
 app.get("/login", (req, res) => { // login GET request
-  return res.json({message: 'Log-in page loaded'});
+  return res.render("SignIn");
 })
 
 app.post("/login", async (req, res) => { // login POST request 
@@ -73,7 +73,7 @@ app.post("/login", async (req, res) => { // login POST request
       message: "Wrong Password",
     });
   }
-  // Authorization process
+  // Authorization processing...(?)
   try {
     const apiResponse = await fetch('https://developer.voiceflow.com/api/endpoint', {
       method: 'GET',
