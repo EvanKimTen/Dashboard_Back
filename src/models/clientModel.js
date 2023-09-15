@@ -7,15 +7,15 @@ const clientSchema = new Schema({
     password: String,
     projectID: {
         type: String,
-        default: config.PROJECT_ID, // Use the API_KEY from your configuration
+        default: process.env.PROJECT_ID, 
     },
     APIKey: {
         type: String,
-        default: config.API_KEY, // Use the API_KEY from your configuration
+        default: process.env.API_KEY,
     },
 });
 
-userSchema.pre('save', async function() { // hashing pw
+clientSchema.pre('save', async function() { // hashing pw
     this.password = await bcrypt.hash(this.password, 5);
 }) 
 

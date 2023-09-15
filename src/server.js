@@ -1,17 +1,8 @@
 const express = require("express");
 const cors = require("cors");
-const fetch = require('node-fetch'); 
+const User = require('./models/clientModel');
 require("dotenv").config();
-
 require('./db'); // connecting to MongoDB
-
-import("node-fetch")
-  .then((fetch) => {
-    // Your server logic that uses fetch here
-  })
-  .catch((err) => {
-    console.error(err);
-  });
 
 
 const app = express();
@@ -31,7 +22,7 @@ app.use("/", knowledgebaseRoutes);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.get("/join", async (req, res) => {
-  return res.render("join");
+  return res.render("SignUp");
 });
 
 app.post("/join", async (req, res) => {
@@ -49,17 +40,17 @@ app.post("/join", async (req, res) => {
           projectID,
           APIKey
       });
-      return res.redirect("/login");
+      return res.redirect("/SignIn");
   } catch (error) {
     return res.status(500).json({ message: 'Internal server error' });
   }
 })
 
-app.get("/login", (req, res) => { // login GET request
+app.get("/login", (req, res) => {
   return res.render("SignIn");
 })
 
-app.post("/login", async (req, res) => { // login POST request 
+app.post("/login", async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username, socialOnly: false });
   if (!user) {
@@ -68,34 +59,64 @@ app.post("/login", async (req, res) => { // login POST request
     });
   }
   const ok = await bcrypt.compare(password, user.password);
-  if (!ok) {
+  if (!ok) { 
     return res.status(500).json({
       message: "Wrong Password",
     });
   }
-  // Authorization processing...(?)
-  try {
-    const apiResponse = await fetch('https://developer.voiceflow.com/api/endpoint', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        // Add any required headers (e.g., API key, authentication token)
-      },
+  const APIKey = user.APIKey;
+  const projectID = user.projectID;
+
+  const apiUrl = 'https://analytics-api.voiceflow.com/v1/query/usage';
+  // Is this really corresponeded to the API after loggin in?
+  import('node-fetch')
+    .then(async (fetch) => {
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': APIKey,
+          },
+          body: JSON.stringify({
+            query: [
+              {
+                name: 'top_intents',
+                filter: {
+                  projectID,
+                  startTime: 'YOUR_START_TIME',
+                  endTime: 'YOUR_END_TIME',
+                  limit: 5,
+                },
+              },
+            ],
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('API Response:', data);
+        } else {
+          console.error('API Request Error:', response.status, response.statusText);
+          response.status(response.status).json({
+            message: 'API Request Error',
+          });
+        }
+      } catch (error) {
+        console.error('API Request Error:', error.message);
+        res.status(500).json({
+          message: 'API Request Error',
+        });
+      }
+    })
+    .catch((err) => {
+      console.error('Fetch Import Error:', err);
+      res.status(500).json({
+        message: 'Fetch Import Error',
+      });
     });
-    if (apiResponse.ok) {
-      const apiData = await apiResponse.json();
-      // Handle the API data as needed
-      res.status(200).json({ message: 'Login successful', apiData });
-    } else {
-      res.status(apiResponse.status).json({ message: 'API request failed' });
-    }
-    req.session.loggedIn = true;
-    req.session.user = user;
-    res.redirect("/");
-  } catch (error) {
-    console.error('API request error:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
+  
 })
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
