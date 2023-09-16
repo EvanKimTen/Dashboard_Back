@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const ANALYTICS_API_KEY = process.env.API_KEY;
-const ANALYTICS_PROJECT_ID = process.env.PROJECT_ID;
+const {APIKey, projectID}= require("../server.js");
+const ANALYTICS_API_KEY = APIKey;
+const ANALYTICS_PROJECT_ID = projectID;
+
 
 // Define a route to handle the specific request
 router.post("/api/proxy/top_intents", async (req, res) => {

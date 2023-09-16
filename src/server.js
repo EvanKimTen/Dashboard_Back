@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const User = require('./models/clientModel');
 require("dotenv").config();
-require('./db'); // connecting to MongoDB
 
 
 const app = express();
@@ -50,6 +49,9 @@ app.get("/login", (req, res) => {
   return res.render("SignIn");
 })
 
+let APIKey;
+let projectID;
+
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username, socialOnly: false });
@@ -64,60 +66,13 @@ app.post("/login", async (req, res) => {
       message: "Wrong Password",
     });
   }
-  const APIKey = user.APIKey;
-  const projectID = user.projectID;
-
-  const apiUrl = 'https://analytics-api.voiceflow.com/v1/query/usage';
-  // Is this really corresponeded to the API after loggin in?
-  import('node-fetch')
-    .then(async (fetch) => {
-      try {
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': APIKey,
-          },
-          body: JSON.stringify({
-            query: [
-              {
-                name: 'top_intents',
-                filter: {
-                  projectID,
-                  startTime: 'YOUR_START_TIME',
-                  endTime: 'YOUR_END_TIME',
-                  limit: 5,
-                },
-              },
-            ],
-          }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log('API Response:', data);
-        } else {
-          console.error('API Request Error:', response.status, response.statusText);
-          response.status(response.status).json({
-            message: 'API Request Error',
-          });
-        }
-      } catch (error) {
-        console.error('API Request Error:', error.message);
-        res.status(500).json({
-          message: 'API Request Error',
-        });
-      }
-    })
-    .catch((err) => {
-      console.error('Fetch Import Error:', err);
-      res.status(500).json({
-        message: 'Fetch Import Error',
-      });
-    });
+  APIKey = user.APIKey;
+  projectID = user.projectID;
   
 })
+
+module.exports = APIKey;
+module.exports = projectID;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
