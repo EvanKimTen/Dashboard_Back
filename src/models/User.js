@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Schema = mongoose.Schema;
 
-const clientSchema = new Schema({
+const userSchema = new Schema({
     username: {type: String, required: true, unique: true},
     password: String,
     projectID: {
@@ -15,8 +15,15 @@ const clientSchema = new Schema({
     },
 });
 
-clientSchema.pre('save', async function() { // hashing pw
+userSchema.pre('save', async function() { // hashing pw
     this.password = await bcrypt.hash(this.password, 5);
 }) 
 
-module.exports = mongoose.model("Client", clientSchema);
+// userSchema.pre('save', async function (next) { // if pw is changed, 
+//     if (this.isModified('password')) {
+//       this.password = await bcrypt.hash(this.password, 10);
+//     }
+//     next();
+// });
+
+module.exports = mongoose.model("User", userSchema);

@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const User = require('./models/clientModel');
+const User = require('./models/User');
 require("dotenv").config();
 
 
@@ -31,6 +31,10 @@ app.post("/join", async (req, res) => {
   }
   if (!APIKey) {
     return res.status(400).json({ message: 'API_KEY is required' });
+  }
+  const exists = await User.exists({ $or: [{ username }, { password }] });
+  if (exists) {
+    return res.status(400).json({ message: 'This username/email is already taken.' });
   }
   try {
       await User.create({
