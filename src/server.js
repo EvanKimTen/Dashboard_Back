@@ -1,8 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const User = require('./models/User');
+const User = require("./models/User");
 require("dotenv").config();
-
 
 const app = express();
 app.use(express.json());
@@ -27,31 +26,33 @@ app.get("/join", async (req, res) => {
 app.post("/join", async (req, res) => {
   const { username, password, projectID, APIKey } = req.body;
   if (!projectID) {
-    return res.status(400).json({ message: 'Your project ID is required' });
+    return res.status(400).json({ message: "Your project ID is required" });
   }
   if (!APIKey) {
-    return res.status(400).json({ message: 'API_KEY is required' });
+    return res.status(400).json({ message: "API_KEY is required" });
   }
   const exists = await User.exists({ $or: [{ username }, { password }] });
   if (exists) {
-    return res.status(400).json({ message: 'This username/email is already taken.' });
+    return res
+      .status(400)
+      .json({ message: "This username/email is already taken." });
   }
   try {
-      await User.create({
-          username,
-          password,
-          projectID,
-          APIKey
-      });
-      return res.redirect("/SignIn");
+    await User.create({
+      username,
+      password,
+      projectID,
+      APIKey,
+    });
+    return res.redirect("/SignIn");
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: "Internal server error" });
   }
-})
+});
 
 app.get("/login", (req, res) => {
   return res.render("SignIn");
-})
+});
 
 let APIKey;
 let projectID;
@@ -65,15 +66,18 @@ app.post("/login", async (req, res) => {
     });
   }
   const ok = await bcrypt.compare(password, user.password);
-  if (!ok) { 
+  if (!ok) {
     return res.status(500).json({
       message: "Wrong Password",
     });
   }
   APIKey = user.APIKey;
   projectID = user.projectID;
-  
-})
+
+  res.json({
+    userId: user._id,
+  });
+});
 
 module.exports = APIKey;
 module.exports = projectID;

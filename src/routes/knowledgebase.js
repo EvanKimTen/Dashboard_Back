@@ -101,4 +101,30 @@ router.post("/proxy/knowledge-base/preview", async (req, res) => {
   }
 });
 
+//Get settings
+router.get("/proxy/knowledge-base/settings/:userId", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    console.log(user.settings);
+    res.send(user.settings);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+//Save settings
+router.put("/proxy/knowledge-base/settings/:userId", async (req, res) => {
+  const { settings } = req.body;
+  try {
+    const user = await User.findById(req.params.userId);
+    user.settings = settings;
+    const response = await user.save();
+    res.send(response);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;
