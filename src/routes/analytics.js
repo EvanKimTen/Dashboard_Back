@@ -4,7 +4,6 @@ const {APIKey, projectID}= require("../server.js");
 const ANALYTICS_API_KEY = APIKey;
 const ANALYTICS_PROJECT_ID = projectID;
 
-
 // Define a route to handle the specific request
 router.post("/api/proxy/top_intents", async (req, res) => {
   try {
