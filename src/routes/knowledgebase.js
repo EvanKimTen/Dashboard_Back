@@ -3,30 +3,31 @@ const axios = require("axios");
 const multer = require("multer");
 const upload = multer();
 const FormData = require("form-data");
-
 const router = express.Router();
-// const { APIKey } = require("../server.js");
+
 const User = require("../models/User");
-const APIKey = process.env.DIALOG_MANAGER_API_KEY;
+const getUserKeys = require("../middleware/getUserKeys");
+// const APIKey = process.env.DIALOG_MANAGER_API_KEY;
 
 const managementApi = axios.create({
   baseURL: "https://api.voiceflow.com/v3alpha/knowledge-base/docs",
-  headers: {
-    authorization: APIKey,
-  },
 });
 
 const queryApi = axios.create({
   baseURL: "https://general-runtime.voiceflow.com/knowledge-base/query",
-  headers: {
-    authorization: APIKey,
-  },
 });
 
 //Get all data sources
-router.get("/proxy/knowledge-base", async (req, res) => {
+router.get("/proxy/knowledge-base/:userId", async (req, res) => {
   try {
-    const response = await managementApi.get("?Pagination=page=1&limit=50");
+    const { API_KEY } = await getUserKeys(req.params.userId);
+    const config = {
+      headers: { authorization: API_KEY },
+    };
+    const response = await managementApi.get(
+      "?Pagination=page=1&limit=50",
+      config
+    );
     res.send(response.data);
   } catch (err) {
     console.error(err);
@@ -35,18 +36,25 @@ router.get("/proxy/knowledge-base", async (req, res) => {
 });
 
 //Upload a URL
-router.post("/proxy/knowledge-base", async (req, res) => {
+router.post("/proxy/knowledge-base/:userId", async (req, res) => {
   const { url } = req.body;
   console.log(url);
   try {
-    const response = await managementApi.post("/upload", {
-      data: {
-        type: "url",
-        url: url,
-        name: url,
+    const { API_KEY } = await getUserKeys(req.params.userId);
+    const config = {
+      headers: { authorization: API_KEY },
+    };
+    const response = await managementApi.post(
+      "/upload",
+      {
+        data: {
+          type: "url",
+          url: url,
+          name: url,
+        },
       },
-    });
-    console.log(response.data);
+      config
+    );
     res.send(response.data);
   } catch (err) {
     console.error(err);
@@ -55,25 +63,40 @@ router.post("/proxy/knowledge-base", async (req, res) => {
 });
 
 //Upload a File
-router.post("/proxy/knowledge-base/file", upload.any(), async (req, res) => {
-  const { files } = req;
-  const { buffer, originalname: filename } = files[0];
+router.post(
+  "/proxy/knowledge-base/file/:userId",
+  upload.any(),
+  async (req, res) => {
+    const { files } = req;
+    const { buffer, originalname: filename } = files[0];
 
-  const formFile = new FormData();
-  formFile.append("file", buffer, { filename });
-  try {
-    const response = await managementApi.post("/upload", formFile);
-    res.send(response.data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Internal server error" });
+    const formFile = new FormData();
+    formFile.append("file", buffer, { filename });
+    try {
+      const { API_KEY } = await getUserKeys(req.params.userId);
+      const config = {
+        headers: { authorization: API_KEY },
+      };
+      const response = await managementApi.post("/upload", formFile, config);
+      res.send(response.data);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Internal server error" });
+    }
   }
-});
+);
 
 //Delete document
-router.delete("/proxy/knowledge-base/:documentID", async (req, res) => {
+router.delete("/proxy/knowledge-base/:documentID/:userId", async (req, res) => {
   try {
-    const response = await managementApi.delete(`/${req.params.documentID}`);
+    const { API_KEY } = await getUserKeys(req.params.userId);
+    const config = {
+      headers: { authorization: API_KEY },
+    };
+    const response = await managementApi.delete(
+      `/${req.params.documentID}`,
+      config
+    );
     res.send(response.data);
   } catch (err) {
     console.error(err);
@@ -82,20 +105,27 @@ router.delete("/proxy/knowledge-base/:documentID", async (req, res) => {
 });
 
 //AI Preview
-router.post("/proxy/knowledge-base/preview", async (req, res) => {
+router.post("/proxy/knowledge-base/preview/:userId", async (req, res) => {
   const { question, settings } = req.body;
   try {
-    const response = await queryApi.post(`/`, {
-      question: question,
-      chunkLimit: settings.chunkLimit,
-      synthesis: true,
-      settings: {
-        model: settings.model,
-        temperature: settings.temperature,
-        system: settings.system,
+    const { API_KEY } = await getUserKeys(req.params.userId);
+    const config = {
+      headers: { authorization: API_KEY },
+    };
+    const response = await queryApi.post(
+      `/`,
+      {
+        question: question,
+        chunkLimit: settings.chunkLimit,
+        synthesis: true,
+        settings: {
+          model: settings.model,
+          temperature: settings.temperature,
+          system: settings.system,
+        },
       },
-    });
-    console.log(response);
+      config
+    );
     res.send(response.data);
   } catch (err) {
     console.error(err);
