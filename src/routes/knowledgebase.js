@@ -3,32 +3,30 @@ const axios = require("axios");
 const multer = require("multer");
 const upload = multer();
 const FormData = require("form-data");
-const mongoose = require("mongoose");
 
 const router = express.Router();
 // const { APIKey } = require("../server.js");
 const User = require("../models/User");
 const APIKey = process.env.DIALOG_MANAGER_API_KEY;
 
-const knowledgebaseApi = axios.create({
+const managementApi = axios.create({
   baseURL: "https://api.voiceflow.com/v3alpha/knowledge-base/docs",
   headers: {
-    authorization: APIKey,
+    authorization: DIALOG_MANAGER_API_KEY,
   },
 });
 
 const queryApi = axios.create({
   baseURL: "https://general-runtime.voiceflow.com/knowledge-base/query",
   headers: {
-    authorization: APIKey,
+    authorization: DIALOG_MANAGER_API_KEY,
   },
 });
 
 //Get all data sources
 router.get("/proxy/knowledge-base", async (req, res) => {
   try {
-    const response = await knowledgebaseApi.get("/");
-    console.log(response.data);
+    const response = await managementApi.get("?Pagination=page=1&limit=50");
     res.send(response.data);
   } catch (err) {
     console.error(err);
@@ -36,11 +34,12 @@ router.get("/proxy/knowledge-base", async (req, res) => {
   }
 });
 
+//Upload a URL
 router.post("/proxy/knowledge-base", async (req, res) => {
   const { url } = req.body;
   console.log(url);
   try {
-    const response = await knowledgebaseApi.post("/upload", {
+    const response = await managementApi.post("/upload", {
       data: {
         type: "url",
         url: url,
@@ -98,32 +97,6 @@ router.post("/proxy/knowledge-base/preview", async (req, res) => {
     });
     console.log(response);
     res.send(response.data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-//Save AI Settings
-router.get("/proxy/knowledge-base/settings/:userId", async (req, res) => {
-  try {
-    const user = await User.findById(req.params.userId);
-    res.send(user.settings);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-//Save AI Settings
-router.put("/proxy/knowledge-base/settings/:userId", async (req, res) => {
-  const settings = req.body;
-  try {
-    const user = await User.findById(req.params.userId);
-    user.settings = settings;
-    const response = await user.save();
-    console.log(response);
-    res.send(response);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal server error" });
