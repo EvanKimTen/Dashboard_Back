@@ -5,7 +5,6 @@ const bcrypt = require("bcrypt");
 require("dotenv").config();
 const mongoose = require("mongoose");
 
-
 const app = express();
 app.use(express.json());
 const port = 5001;
@@ -49,6 +48,7 @@ app.post("/join", async (req, res) => {
     });
     return res.status(200).json({ message: "Successful Login!" });
   } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
     return res.status(500).json({ message: "Internal server error" });
   }
 });
