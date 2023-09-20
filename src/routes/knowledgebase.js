@@ -12,14 +12,14 @@ const APIKey = process.env.DIALOG_MANAGER_API_KEY;
 const managementApi = axios.create({
   baseURL: "https://api.voiceflow.com/v3alpha/knowledge-base/docs",
   headers: {
-    authorization: DIALOG_MANAGER_API_KEY,
+    authorization: APIKey,
   },
 });
 
 const queryApi = axios.create({
   baseURL: "https://general-runtime.voiceflow.com/knowledge-base/query",
   headers: {
-    authorization: DIALOG_MANAGER_API_KEY,
+    authorization: APIKey,
   },
 });
 
@@ -107,7 +107,6 @@ router.post("/proxy/knowledge-base/preview", async (req, res) => {
 router.get("/proxy/knowledge-base/settings/:userId", async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
-    console.log(user.settings);
     res.send(user.settings);
   } catch (err) {
     console.error(err);
@@ -117,7 +116,7 @@ router.get("/proxy/knowledge-base/settings/:userId", async (req, res) => {
 
 //Save settings
 router.put("/proxy/knowledge-base/settings/:userId", async (req, res) => {
-  const { settings } = req.body;
+  const settings = req.body;
   try {
     const user = await User.findById(req.params.userId);
     user.settings = settings;
