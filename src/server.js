@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const User = require('./models/User');
+const bcrypt = require('bcrypt')
 require("dotenv").config();
 const mongoose = require('mongoose');
 
@@ -16,8 +17,8 @@ app.use(cors());
 const analyticsRoutes = require("./routes/analytics");
 const knowledgebaseRoutes = require("./routes/knowledgebase");
 
-app.use("/", analyticsRoutes);
-app.use("/", knowledgebaseRoutes);
+app.use("/analytics", analyticsRoutes);
+app.use("/knowledge-base", knowledgebaseRoutes);
 
 mongoose
   .connect(process.env.MONGODB_URL)
@@ -28,7 +29,7 @@ mongoose
 
 app.post("/join", async (req, res) => {
   const { username, password, projectID, APIKey } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
   // if (!projectID) {
   //   return res.status(400).json({ message: 'Your project ID is required' });
   // }
@@ -55,17 +56,17 @@ app.post("/join", async (req, res) => {
 let APIKey;
 let projectID;
 
-app.post("/login", async (req, res) => {
+app.post("/", async (req, res) => {
   const { username, password } = req.body;
-  const user = await User.findOne({ username, socialOnly: false });
+  const user = await User.findOne({ username: username }); // outputs null value.
   if (!user) {
-    return res.status(500).json({
+    return res.status(400).json({
       message: "An account with this username does not exist.",
     });
   }
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) { 
-    return res.status(500).json({
+    return res.status(400).json({
       message: "Wrong Password",
     });
   }
