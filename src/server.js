@@ -16,16 +16,17 @@ app.use(cors());
 // Routes
 const analyticsRoutes = require("./routes/analytics");
 const knowledgebaseRoutes = require("./routes/knowledgebase");
+const transcriptRoutes = require("./routes/transcript");
 
 app.use("/analytics", analyticsRoutes);
 app.use("/knowledge-base", knowledgebaseRoutes);
+app.use("/transcript", transcriptRoutes);
 
 mongoose
   .connect(process.env.MONGODB_URL)
   .then(() => console.log("Connected to mongodb"))
   .catch((err) => console.log(err));
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.post("/join", async (req, res) => {
   const { username, password, projectID, APIKey } = req.body;
@@ -78,8 +79,6 @@ app.post("/", async (req, res) => {
 
 module.exports = APIKey;
 module.exports = projectID;
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.listen(port, () => {
   console.log(`Proxy server is running on port ${port}`);
