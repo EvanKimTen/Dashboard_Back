@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const API_KEY = process.env.API_KEY;
-const PROJECT_ID = process.env.PROJECT_ID;
+
+const {APIKey, projectID}= require("../server.js");
+const ANALYTICS_API_KEY = APIKey;
+const ANALYTICS_PROJECT_ID = projectID;
 
 // Define a route to handle the specific request
 router.post("/api/proxy/top_intents", async (req, res) => {
@@ -14,14 +16,14 @@ router.post("/api/proxy/top_intents", async (req, res) => {
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: API_KEY,
+        authorization: ANALYTICS_API_KEY,
       },
       body: JSON.stringify({
         query: [
           {
             name: "top_intents",
             filter: {
-              projectID: PROJECT_ID,
+              projectID: ANALYTICS_PROJECT_ID,
               startTime,
               endTime,
               limit: 5,
@@ -63,14 +65,14 @@ router.post("/api/proxy/understood_messages", async (req, res) => {
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: API_KEY,
+        authorization: ANALYTICS_API_KEY,
       },
       body: JSON.stringify({
         query: [
           {
             name: "understood_messages",
             filter: {
-              projectID: PROJECT_ID,
+              projectID: ANALYTICS_PROJECT_ID,
               startTime,
               endTime,
             },
@@ -111,14 +113,14 @@ router.post("/api/proxy/interactions", async (req, res) => {
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: API_KEY,
+        authorization: ANALYTICS_API_KEY,
       },
       body: JSON.stringify({
         query: [
           {
             name: "interactions",
             filter: {
-              projectID: PROJECT_ID,
+              projectID: ANALYTICS_PROJECT_ID,
               startTime,
               endTime,
             },
@@ -159,14 +161,14 @@ router.post("/api/proxy/users", async (req, res) => {
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: API_KEY,
+        authorization: ANALYTICS_API_KEY,
       },
       body: JSON.stringify({
         query: [
           {
             name: "unique_users",
             filter: {
-              projectID: PROJECT_ID,
+              projectID: ANALYTICS_PROJECT_ID,
               startTime,
               endTime,
             },
@@ -207,14 +209,14 @@ router.post("/api/proxy/sessions", async (req, res) => {
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: API_KEY,
+        authorization: ANALYTICS_API_KEY,
       },
       body: JSON.stringify({
         query: [
           {
             name: "sessions",
             filter: {
-              projectID: PROJECT_ID,
+              projectID: ANALYTICS_PROJECT_ID,
               startTime,
               endTime,
             },
