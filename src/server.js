@@ -5,13 +5,6 @@ const bcrypt = require("bcrypt");
 require("dotenv").config();
 const mongoose = require("mongoose");
 
-import("node-fetch")
-  .then((fetch) => {
-    // Your server logic that uses fetch here
-  })
-  .catch((err) => {
-    console.error(err);
-  });
 
 const app = express();
 app.use(express.json());

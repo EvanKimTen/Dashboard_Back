@@ -10,7 +10,7 @@ const router = express.Router();
 const User = require("../models/User");
 const APIKey = process.env.DIALOG_MANAGER_API_KEY;
 
-const managementApi = axios.create({
+const knowledgebaseApi = axios.create({
   baseURL: "https://api.voiceflow.com/v3alpha/knowledge-base/docs",
   headers: {
     authorization: APIKey,
@@ -27,7 +27,8 @@ const queryApi = axios.create({
 //Get all data sources
 router.get("/proxy/knowledge-base", async (req, res) => {
   try {
-    const response = await managementApi.get("?Pagination=page=1&limit=50");
+    const response = await knowledgebaseApi.get("/");
+    console.log(response.data);
     res.send(response.data);
   } catch (err) {
     console.error(err);
@@ -35,12 +36,11 @@ router.get("/proxy/knowledge-base", async (req, res) => {
   }
 });
 
-//Upload a URL
 router.post("/proxy/knowledge-base", async (req, res) => {
   const { url } = req.body;
   console.log(url);
   try {
-    const response = await managementApi.post("/upload", {
+    const response = await knowledgebaseApi.post("/upload", {
       data: {
         type: "url",
         url: url,
