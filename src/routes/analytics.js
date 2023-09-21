@@ -1,13 +1,16 @@
 const express = require("express");
 const router = express.Router();
-
-const {APIKey, projectID}= require("../server.js");
-const ANALYTICS_API_KEY = APIKey;
-const ANALYTICS_PROJECT_ID = projectID;
+const getKeys = require("./user.js").getKeys;
+// const ANALYTICS_API_KEY = process.env.API_KEY;
+// const ANALYTICS_PROJECT_ID = process.env.PROJECT_ID;
 
 // Define a route to handle the specific request
 router.post("/api/proxy/top_intents", async (req, res) => {
   try {
+    const keys = getKeys();
+    const ANALYTICS_API_KEY = keys[0];
+    const ANALYTICS_PROJECT_ID = keys[1];
+
     // Define the options for the external API request
     const { startTime, endTime } = req.body.query[0].filter;
 
@@ -57,6 +60,9 @@ router.post("/api/proxy/top_intents", async (req, res) => {
 
 router.post("/api/proxy/understood_messages", async (req, res) => {
   try {
+    const keys = getKeys();
+    const ANALYTICS_API_KEY = keys[0];
+    const ANALYTICS_PROJECT_ID = keys[1];
     // Define the options for the external API request
     const { startTime, endTime } = req.body.query[0].filter;
 
@@ -105,6 +111,9 @@ router.post("/api/proxy/understood_messages", async (req, res) => {
 
 router.post("/api/proxy/interactions", async (req, res) => {
   try {
+    const keys = getKeys();
+    const ANALYTICS_API_KEY = keys[0];
+    const ANALYTICS_PROJECT_ID = keys[1];
     // Define the options for the external API request
     const { startTime, endTime } = req.body.query[0].filter;
 
@@ -153,6 +162,9 @@ router.post("/api/proxy/interactions", async (req, res) => {
 
 router.post("/api/proxy/users", async (req, res) => {
   try {
+    const keys = getKeys();
+    const ANALYTICS_API_KEY = keys[0];
+    const ANALYTICS_PROJECT_ID = keys[1];
     // Define the options for the external API request
     const { startTime, endTime } = req.body.query[0].filter;
 
@@ -201,6 +213,9 @@ router.post("/api/proxy/users", async (req, res) => {
 
 router.post("/api/proxy/sessions", async (req, res) => {
   try {
+    const keys = getKeys();
+    const ANALYTICS_API_KEY = keys[0];
+    const ANALYTICS_PROJECT_ID = keys[1];
     // Define the options for the external API request
     const { startTime, endTime } = req.body.query[0].filter;
 
