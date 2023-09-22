@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
-const { get } = require("http");
 
 router.post("/join", async (req, res) => {
   const { username, password, projectID, APIKey } = req.body;
@@ -30,9 +29,6 @@ router.post("/join", async (req, res) => {
   }
 });
 
-let APIKey;
-let projectID;
-
 router.post("/", async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username: username }); // outputs null value.
@@ -47,16 +43,10 @@ router.post("/", async (req, res) => {
       message: "Wrong Password",
     });
   }
-  APIKey = user.APIKey;
-  projectID = user.projectID;
+
   return res
     .status(200)
     .json({ message: "Successful Login!", userId: user._id });
 });
 
-const getKeys = () => {
-  return [APIKey, projectID];
-};
-
-module.exports.getKeys = getKeys;
-module.exports.router = router;
+module.exports = router;

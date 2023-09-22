@@ -13,7 +13,7 @@ app.use(cors());
 // Routes
 const analyticsRoutes = require("./routes/analytics");
 const knowledgebaseRoutes = require("./routes/knowledgebase");
-const userRoutes = require("./routes/user").router;
+const userRoutes = require("./routes/user");
 
 app.use("/", analyticsRoutes);
 app.use("/", knowledgebaseRoutes);
