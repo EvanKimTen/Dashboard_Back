@@ -1,27 +1,28 @@
 const express = require("express");
 const router = express.Router();
-// const ANALYTICS_API_KEY = process.env.API_KEY;
-// const ANALYTICS_PROJECT_ID = process.env.PROJECT_ID;
+const getUserKeys = require("../middleware/getUserKeys");
+
 
 // Define a route to handle the specific request
-router.post("/api/proxy/top_intents", async (req, res) => {
+router.post("/api/proxy/top_intents/:userId", async (req, res) => {
   try {
     // Define the options for the external API request
     const { startTime, endTime } = req.body.query[0].filter;
+    const { API_KEY, PROJECT_ID } = await getUserKeys(req.params.userId);
 
     const options = {
       method: "POST",
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: ANALYTICS_API_KEY,
+        authorization: API_KEY,
       },
       body: JSON.stringify({
         query: [
           {
             name: "top_intents",
             filter: {
-              projectID: ANALYTICS_PROJECT_ID,
+              projectID: PROJECT_ID,
               startTime,
               endTime,
               limit: 5,
@@ -53,27 +54,28 @@ router.post("/api/proxy/top_intents", async (req, res) => {
   }
 });
 
-router.post("/api/proxy/understood_messages", async (req, res) => {
+router.post("/api/proxy/understood_messages/:userId", async (req, res) => {
   try {
-    const keys = getKeys();
-    const ANALYTICS_API_KEY = keys[0];
-    const ANALYTICS_PROJECT_ID = keys[1];
+    // const keys = getKeys();
+    // const API_KEY = keys[0];
+    // const PROJECT_ID = keys[1];
     // Define the options for the external API request
     const { startTime, endTime } = req.body.query[0].filter;
+    const { API_KEY, PROJECT_ID } = await getUserKeys(req.params.userId);
 
     const options = {
       method: "POST",
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: ANALYTICS_API_KEY,
+        authorization: API_KEY,
       },
       body: JSON.stringify({
         query: [
           {
             name: "understood_messages",
             filter: {
-              projectID: ANALYTICS_PROJECT_ID,
+              projectID: PROJECT_ID,
               startTime,
               endTime,
             },
@@ -104,27 +106,28 @@ router.post("/api/proxy/understood_messages", async (req, res) => {
   }
 });
 
-router.post("/api/proxy/interactions", async (req, res) => {
+router.post("/api/proxy/interactions/:userId", async (req, res) => {
   try {
-    const keys = getKeys();
-    const ANALYTICS_API_KEY = keys[0];
-    const ANALYTICS_PROJECT_ID = keys[1];
+    // const keys = getKeys();
+    // const API_KEY = keys[0];
+    // const PROJECT_ID = keys[1];
     // Define the options for the external API request
     const { startTime, endTime } = req.body.query[0].filter;
+    const { API_KEY, PROJECT_ID } = await getUserKeys(req.params.userId);
 
     const options = {
       method: "POST",
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: ANALYTICS_API_KEY,
+        authorization: API_KEY,
       },
       body: JSON.stringify({
         query: [
           {
             name: "interactions",
             filter: {
-              projectID: ANALYTICS_PROJECT_ID,
+              projectID: PROJECT_ID,
               startTime,
               endTime,
             },
@@ -155,27 +158,28 @@ router.post("/api/proxy/interactions", async (req, res) => {
   }
 });
 
-router.post("/api/proxy/users", async (req, res) => {
+router.post("/api/proxy/users/:userId", async (req, res) => {
   try {
-    const keys = getKeys();
-    const ANALYTICS_API_KEY = keys[0];
-    const ANALYTICS_PROJECT_ID = keys[1];
+    // const keys = getKeys();
+    // const API_KEY = keys[0];
+    // const PROJECT_ID = keys[1];
     // Define the options for the external API request
     const { startTime, endTime } = req.body.query[0].filter;
+    const { API_KEY, PROJECT_ID } = await getUserKeys(req.params.userId);
 
     const options = {
       method: "POST",
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: ANALYTICS_API_KEY,
+        authorization: API_KEY,
       },
       body: JSON.stringify({
         query: [
           {
             name: "unique_users",
             filter: {
-              projectID: ANALYTICS_PROJECT_ID,
+              projectID: PROJECT_ID,
               startTime,
               endTime,
             },
@@ -206,27 +210,28 @@ router.post("/api/proxy/users", async (req, res) => {
   }
 });
 
-router.post("/api/proxy/sessions", async (req, res) => {
+router.post("/api/proxy/sessions/:userId", async (req, res) => {
   try {
-    const keys = getKeys();
-    const ANALYTICS_API_KEY = keys[0];
-    const ANALYTICS_PROJECT_ID = keys[1];
+    // const keys = getKeys();
+    // const API_KEY = keys[0];
+    // const PROJECT_ID = keys[1];
     // Define the options for the external API request
     const { startTime, endTime } = req.body.query[0].filter;
+    const { API_KEY, PROJECT_ID } = await getUserKeys(req.params.userId);
 
     const options = {
       method: "POST",
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: ANALYTICS_API_KEY,
+        authorization: API_KEY,
       },
       body: JSON.stringify({
         query: [
           {
             name: "sessions",
             filter: {
-              projectID: ANALYTICS_PROJECT_ID,
+              projectID: PROJECT_ID,
               startTime,
               endTime,
             },
